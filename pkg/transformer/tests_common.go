@@ -3,10 +3,8 @@ package transformer
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
 	"github.com/qtumproject/janus/pkg/eth"
 	"github.com/qtumproject/janus/pkg/qtum"
@@ -120,21 +118,4 @@ func mustMarshalIndent(v interface{}, prefix, indent string) []byte {
 		panic(err)
 	}
 	return res
-}
-
-func unmarshallTestDataFile(filepath string, object interface{}) error {
-
-	jsonFile, err := os.Open(filepath)
-
-	if err != nil {
-		return fmt.Errorf("error locating input data file (%s): %s", filepath, err)
-	}
-
-	byteValue, err := ioutil.ReadAll(jsonFile)
-	if err != nil {
-		return fmt.Errorf("error reading input data file (%s): %s", filepath, err)
-	}
-
-	err = json.Unmarshal(byteValue, object)
-	return err
 }
