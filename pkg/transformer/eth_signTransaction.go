@@ -45,7 +45,7 @@ func (p *ProxyETHSignTransaction) getRequiredUtxos(from string, neededAmount dec
 		return nil, decimal.Decimal{}, err
 	}
 	// need to get utxos with txid and vouts. In order to do this we get a list of unspent transactions and begin summing them up
-	var unspentListReq *qtum.ListUnspentRequest = &qtum.ListUnspentRequest{MinConf: 6, MaxConf: 999, Addresses: []string{base58Addr}}
+	var unspentListReq *qtum.ListUnspentRequest = &qtum.ListUnspentRequest{MinConf: 6, MaxConf: 9999999, Addresses: []string{base58Addr}}
 	qtumresp, err := p.ListUnspent(unspentListReq)
 	if err != nil {
 		return nil, decimal.Decimal{}, err

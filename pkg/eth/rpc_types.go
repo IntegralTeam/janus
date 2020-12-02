@@ -37,18 +37,22 @@ func (r *SendTransactionRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+func isEmptyHexStr(str string) bool {
+	return str == "" || str == "0x"
+}
+
 // see: https://ethereum.stackexchange.com/questions/8384/transfer-an-amount-between-two-ethereum-accounts-using-json-rpc
 func (t *SendTransactionRequest) IsSendEther() bool {
 	// data must be empty
-	return t.Value != "" && t.To != "" && t.From != "" && t.Data == ""
+	return !isEmptyHexStr(t.Value) && !isEmptyHexStr(t.To) && !isEmptyHexStr(t.From) && isEmptyHexStr(t.Data)
 }
 
 func (t *SendTransactionRequest) IsCreateContract() bool {
-	return t.To == "" && t.Data != ""
+	return isEmptyHexStr(t.To) && !isEmptyHexStr(t.Data)
 }
 
 func (t *SendTransactionRequest) IsCallContract() bool {
-	return t.To != "" && t.Data != ""
+	return !isEmptyHexStr(t.To) && !isEmptyHexStr(t.Data)
 }
 
 func (t *SendTransactionRequest) GasHex() string {
