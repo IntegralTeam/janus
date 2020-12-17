@@ -417,6 +417,7 @@ type (
 		Timestamp        string   `json:"timestamp"`
 		Transactions     []string `json:"transactions"`
 		Uncles           []string `json:"uncles"`
+		ReceiptsRoot     string   `json:"receiptsRoot"`
 	}
 )
 
