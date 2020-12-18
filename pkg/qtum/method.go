@@ -44,6 +44,19 @@ func (m *Method) SignMessage(addr string, msg string) (string, error) {
 	return signature, nil
 }
 
+func (m *Method) GetTransaction(Txid string) (*GetTransactionResponse, error) {
+	var resp *GetTransactionResponse
+	req := GetTransactionRequest{
+		Txid: Txid
+	}
+	err := m.Request(MethodGetTransaction, &req, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
 func (m *Method) GetTransactionReceipt(txHash string) (*GetTransactionReceiptResponse, error) {
 	var resp *GetTransactionReceiptResponse
 	err := m.Request(MethodGetTransactionReceipt, GetTransactionReceiptRequest(txHash), &resp)
