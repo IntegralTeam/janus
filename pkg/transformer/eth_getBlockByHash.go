@@ -8,35 +8,27 @@ import (
 	"strings"
 )
 
-// ProxyETHGetBlockByNumber implements ETHProxy
-type ProxyETHGetBlockByNumber struct {
+// ProxyETHGetBlockByHash implements ETHProxy
+type ProxyETHGetBlockByHash struct {
 	*qtum.Qtum
 }
 
-func (p *ProxyETHGetBlockByNumber) Method() string {
-	return "eth_getBlockByNumber"
+func (p *ProxyETHGetBlockByHash) Method() string {
+	return "eth_getBlockByHash"
 }
 
-func (p *ProxyETHGetBlockByNumber) Request(rawreq *eth.JSONRPCRequest) (interface{}, error) {
-	var req eth.GetBlockByNumberRequest
+func (p *ProxyETHGetBlockByHash) Request(rawreq *eth.JSONRPCRequest) (interface{}, error) {
+	var req eth.GetBlockByHashRequest
 	if err := unmarshalRequest(rawreq.Params, &req); err != nil {
 		return nil, err
 	}
 
-	return p.request(&req)
+	qtumreq := p.ToRequest(&req)
+
+	return p.request(qtumreq)
 }
-func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*eth.GetBlockByNumberResponse, error) {
-	blockNum, err := getQtumBlockNumber(req.BlockNumber, 0)
-	if err != nil {
-		return nil, err
-	}
-
-	blockHash, err := p.GetBlockHash(blockNum)
-	if err != nil {
-		return nil, err
-	}
-
-	blockHeaderResp, err := p.GetBlockHeader(string(blockHash))
+func (p *ProxyETHGetBlockByHash) request(req *eth.GetBlockByHashRequest) (*eth.GetBlockByHashResponse, error) {
+	blockHeaderResp, err := p.GetBlockHeader(req.BlockHash)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +47,7 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 		nonce = res
 	}
 
-	blockResp, err := p.GetBlock(string(blockHash))
+	blockResp, err := p.GetBlock(string(req.BlockHash))
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +60,7 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 		}
 
 		/// TODO: Correct to normal values
-		return &eth.GetBlockByNumberResponse{
+		return &eth.GetBlockByHashResponse{
 			Hash:             utils.AddHexPrefix(blockHeaderResp.Hash),
 			Nonce:            utils.AddHexPrefix(nonce),
 			Number:           hexutil.EncodeUint64(uint64(blockHeaderResp.Height)),
@@ -108,7 +100,7 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 		}
 
 		/// TODO: Correct to normal values
-		return &eth.GetBlockByNumberResponse{
+		return &eth.GetBlockByHashResponse{
 			Hash:             utils.AddHexPrefix(blockHeaderResp.Hash),
 			Nonce:            utils.AddHexPrefix(nonce),
 			Number:           hexutil.EncodeUint64(uint64(blockHeaderResp.Height)),
@@ -131,5 +123,12 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 			Sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
 			Uncles:     []string{},
 		}, nil
+	}
+}
+
+func (p *ProxyETHGetBlockByHash) ToRequest(ethreq *eth.GetBlockByHashRequest) *eth.GetBlockByHashRequest {
+	return &eth.GetBlockByHashRequest{
+		BlockHash: utils.RemoveHexPrefix(strings.Trim(ethreq.BlockHash, "\"")),
+		FullTransaction: ethreq.FullTransaction,
 	}
 }

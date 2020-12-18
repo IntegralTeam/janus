@@ -103,6 +103,7 @@ func DefaultProxies(qtumRPCClient *qtum.Qtum) []ETHProxy {
 
 		&ProxyETHEstimateGas{ProxyETHCall: ethCall},
 		&ProxyETHGetBlockByNumber{Qtum: qtumRPCClient},
+		&ProxyETHGetBlockByHash{Qtum: qtumRPCClient},
 		&ProxyETHGetBalance{Qtum: qtumRPCClient},
 		&Web3ClientVersion{},
 		&ProxyETHSign{Qtum: qtumRPCClient},
