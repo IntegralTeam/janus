@@ -415,7 +415,7 @@ type (
 		GasLimit         string   `json:"gasLimit"`
 		GasUsed          string   `json:"gasUsed"`
 		Timestamp        string   `json:"timestamp"`
-		Transactions     []string `json:"transactions"`
+		Transactions     []GetTransactionByHashResponse `json:"transactions"`
 		Uncles           []string `json:"uncles"`
 		ReceiptsRoot     string   `json:"receiptsRoot"`
 	}

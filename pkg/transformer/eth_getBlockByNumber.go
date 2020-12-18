@@ -50,7 +50,7 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 
 	if len(strings.TrimLeft(nonce, "0x")) < 16 {
 		res := strings.TrimLeft(nonce, "0x")
-		for i := 0; i < 16 - len(res); {
+		for i := 0; i < 16-len(res); {
 			res = "0" + res
 		}
 		nonce = res
@@ -67,7 +67,7 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 	// }
 
 	txs := make([]eth.GetTransactionByHashResponse, 0, len(blockResp.Tx))
-	for _, tx := range blockResp.Tx {
+	for i, tx := range blockResp.Tx {
 		if blockHeaderResp.Height == 0 {
 			break
 		}
@@ -88,15 +88,17 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 		}
 
 		ethTx := eth.GetTransactionByHashResponse{
-			Hash:      utils.AddHexPrefix(txData.Txid),
-			BlockHash: utils.AddHexPrefix(txData.Blockhash),
-			Nonce:     "0x01",
-			Value:     ethVal,
-
-			// Contract invokation info:
-			// Input,
-			// Gas,
-			// GasPrice,
+			Hash:             utils.AddHexPrefix(txData.Txid),
+			Nonce:            "0x01",
+			BlockHash:        utils.AddHexPrefix(txData.Blockhash),
+			BlockNumber:      hexutil.EncodeUint64(uint64(blockHeaderResp.Height)),
+			TransactionIndex: hexutil.EncodeUint64(uint64(i)),
+			From:             "0x0000000000000000000000000000000000000000",
+			To:               "0x0000000000000000000000000000000000000000",
+			Value:            ethVal,
+			GasPrice:         hexutil.EncodeUint64(uint64(txData.Fee)),
+			Gas:              "0x01",
+			Input:            "0x00",
 		}
 
 		var invokeInfo *qtum.ContractInvokeInfo
@@ -109,26 +111,26 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 
 			// switch out.ScriptPubKey.Type
 			switch finalOp {
-				case "OP_CALL":
-					info, err := qtum.ParseCallSenderASM(script)
-					// OP_CALL with OP_SENDER has the script type "nonstandard"
-					if err != nil {
-						return nil, err
-					}
+			case "OP_CALL":
+				info, err := qtum.ParseCallSenderASM(script)
+				// OP_CALL with OP_SENDER has the script type "nonstandard"
+				if err != nil {
+					return nil, err
+				}
 
-					invokeInfo = info
+				invokeInfo = info
 
-					break
-				case "OP_CREATE":
-					// OP_CALL with OP_SENDER has the script type "create_sender"
-					info, err := qtum.ParseCreateSenderASM(script)
-					if err != nil {
-						return nil, err
-					}
+				break
+			case "OP_CREATE":
+				// OP_CALL with OP_SENDER has the script type "create_sender"
+				info, err := qtum.ParseCreateSenderASM(script)
+				if err != nil {
+					return nil, err
+				}
 
-					invokeInfo = info
+				invokeInfo = info
 
-					break
+				break
 			}
 		}
 
@@ -175,7 +177,7 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 		GasUsed:         "0x00",
 		LogsBloom:       "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
 
-		Sha3Uncles:      "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-		Uncles:          []string{},
+		Sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+		Uncles:     []string{},
 	}, nil
 }

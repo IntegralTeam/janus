@@ -56,7 +56,7 @@ func QtumAmountToEthValue(amount float64) (string, error) {
 	bigAmount = bigAmount.Mul(bigAmount, big.NewFloat(float64(1e8)))
 
 	result := new(big.Int)
-	result, success := result.SetString(bigAmount.String(), 10)
+	result, success := result.SetString(bigAmount.Text('f', 0), 10)
 	if !success {
 		return "0x0", errors.New("big.Int#SetString is not success")
 	}
