@@ -3,7 +3,7 @@ package transformer
 import (
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
+	// "github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/pkg/errors"
 	"github.com/qtumproject/janus/pkg/eth"
 	"github.com/qtumproject/janus/pkg/qtum"
@@ -102,19 +102,20 @@ func (p *ProxyETHGetTransactionByHash) request(req *qtum.GetTransactionRequest) 
 		ethTx.GasPrice = utils.AddHexPrefix(invokeInfo.GasPrice)
 		ethTx.Input = utils.AddHexPrefix(invokeInfo.CallData)
 
-		receipt, err := p.Qtum.GetTransactionReceipt(tx.Txid)
-		if err != nil && err != qtum.EmptyResponseErr {
-			return nil, err
-		}
+		// TODO: Error
+		// receipt, err := p.Qtum.GetTransactionReceipt(tx.Txid)
+		// if err != nil && err != qtum.EmptyResponseErr {
+		// 	return nil, err
+		// }
 
-		if receipt != nil {
-			ethTx.BlockNumber = hexutil.EncodeUint64(receipt.BlockNumber)
-			ethTx.TransactionIndex = hexutil.EncodeUint64(receipt.TransactionIndex)
+		// if receipt != nil {
+		// 	ethTx.BlockNumber = hexutil.EncodeUint64(receipt.BlockNumber)
+		// 	ethTx.TransactionIndex = hexutil.EncodeUint64(receipt.TransactionIndex)
 
-			if receipt.ContractAddress != "0000000000000000000000000000000000000000" {
-				ethTx.To = utils.AddHexPrefix(receipt.ContractAddress)
-			}
-		}
+		// 	if receipt.ContractAddress != "0000000000000000000000000000000000000000" {
+		// 		ethTx.To = utils.AddHexPrefix(receipt.ContractAddress)
+		// 	}
+		// }
 	}
 
 	return &ethTx, nil
