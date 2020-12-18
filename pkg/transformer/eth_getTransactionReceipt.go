@@ -31,10 +31,29 @@ func (p *ProxyETHGetTransactionReceipt) Request(rawreq *eth.JSONRPCRequest) (int
 }
 
 func (p *ProxyETHGetTransactionReceipt) request(req *qtum.GetTransactionReceiptRequest) (*eth.GetTransactionReceiptResponse, error) {
-	var receipt qtum.GetTransactionReceiptResponse
-	if err := p.Qtum.Request(qtum.MethodGetTransactionReceipt, req, &receipt); err != nil {
+	receipt, err := p.GetTransactionReceipt(string(*req))
+	if err != nil {
 		if err == qtum.EmptyResponseErr {
-			return nil, nil
+			ethTx, err := p.GetTransactionByHash(string(*req), 0, 0)
+			if err != nil {
+				return nil, err
+			}
+
+			/// TODO: Correct to normal values
+			return &eth.GetTransactionReceiptResponse{
+				TransactionHash:   ethTx.Hash,
+				TransactionIndex:  "0x0",
+				BlockHash:         ethTx.BlockHash,
+				BlockNumber:       ethTx.BlockNumber,
+				From:              ethTx.From,
+				To:                ethTx.To,
+				CumulativeGasUsed: ethTx.Gas,
+				GasUsed:           ethTx.Gas,
+				ContractAddress:   ethTx.To,
+				Logs:              []eth.Log{},
+				LogsBloom:         "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+				Status:            "0x1",
+			}, nil
 		}
 		return nil, err
 	}
@@ -44,7 +63,7 @@ func (p *ProxyETHGetTransactionReceipt) request(req *qtum.GetTransactionReceiptR
 		status = "0x1"
 	}
 
-	r := qtum.TransactionReceiptStruct(receipt)
+	r := qtum.TransactionReceiptStruct(*receipt)
 	logs := getEthLogs(&r)
 
 	ethTxReceipt := eth.GetTransactionReceiptResponse{
