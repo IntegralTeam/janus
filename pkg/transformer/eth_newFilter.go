@@ -35,9 +35,9 @@ func (p *ProxyETHNewFilter) request(ethreq *eth.NewFilterRequest) (eth.NewFilter
 	var from *big.Int
 	var err error
 	if ethreq.FromBlock == nil {
-		from, err = getQtumBlockNumber([]byte("latest"), 0)
+		from, err = p.getQtumBlockNumber([]byte("latest"), 0)
 	} else {
-		from, err = getQtumBlockNumber(ethreq.FromBlock, 0)
+		from, err = p.getQtumBlockNumber(ethreq.FromBlock, 0)
 	}
 	if err != nil {
 		return "", err

@@ -26,7 +26,7 @@ func (p *ProxyETHGetBlockByNumber) Request(rawreq *eth.JSONRPCRequest) (interfac
 	return p.request(&req)
 }
 func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*eth.GetBlockByNumberResponse, error) {
-	blockNum, err := getQtumBlockNumber(req.BlockNumber, 0)
+	blockNum, err := p.getQtumBlockNumber(req.BlockNumber, 0)
 	if err != nil {
 		return nil, err
 	}

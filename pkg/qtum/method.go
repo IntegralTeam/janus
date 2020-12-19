@@ -102,6 +102,11 @@ func (m *Method) GetBlockHash(b *big.Int) (resp GetBlockHashResponse, err error)
 	return
 }
 
+func (m *Method) GetBlockChainInfo() (resp GetBlockChainInfoResponse, err error) {
+	err = m.Request(MethodGetBlockChainInfo, nil, &resp)
+	return
+}
+
 func (m *Method) GetBlockHeader(hash string) (resp *GetBlockHeaderResponse, err error) {
 	req := GetBlockHeaderRequest{
 		Hash: hash,
