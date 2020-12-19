@@ -474,7 +474,6 @@ type (
 	}
 )
 
-
 func (r *GetBlockByNumberRequest) UnmarshalJSON(data []byte) error {
 	var params []json.RawMessage
 	if err := json.Unmarshal(data, &params); err != nil {

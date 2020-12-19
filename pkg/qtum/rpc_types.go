@@ -531,6 +531,26 @@ func (r *GetBlockCountResponse) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// ========== GetRawTransaction ============= //
+
+type (
+	GetRawTransactionRequest struct {
+		Txid string
+	}
+	GetRawTransactionResponse string
+)
+
+func (r *GetRawTransactionRequest) MarshalJSON() ([]byte, error) {
+	/*
+		1. "txid"                  (string, required) The transaction id
+		2. "include_watchonly"     (bool, optional, default=false) Whether to include watch-only addresses in balance calculation and details[]
+		3. "waitconf"              (int, optional, default=0) Wait for enough confirmations before returning
+	*/
+	return json.Marshal([]interface{}{
+		r.Txid,
+	})
+}
+
 // ========== GetTransaction ============= //
 
 type (

@@ -15,6 +15,7 @@ const (
 	MethodSendToContract        = "sendtocontract"
 	MethodGetTransactionReceipt = "gettransactionreceipt"
 	MethodGetTransaction        = "gettransaction"
+	MethodGetRawTransaction     = "getrawtransaction"
 	MethodCreateContract        = "createcontract"
 	MethodSendToAddress         = "sendtoaddress"
 	MethodCallContract          = "callcontract"
