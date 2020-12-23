@@ -31,7 +31,8 @@ func (p *ProxyETHNetVersion) request() (*eth.NetVersionResponse, error) {
 		// https://github.com/ethereum/wiki/wiki/JSON-RPC#net_version
 		networkID = "0x1024"
 	default:
-		networkID = qtumresp.Chain
+		// TODO: discuss policy? NetworkID has to be an integer, can't just return qtumresp.Chain.
+		networkID = "0x1024"
 	}
 
 	resp := eth.NetVersionResponse(networkID)
