@@ -2,6 +2,7 @@ package transformer
 
 import (
 	"fmt"
+	"math/big"
 
 	"github.com/qtumproject/janus/pkg/eth"
 	"github.com/qtumproject/janus/pkg/qtum"
@@ -56,7 +57,8 @@ func (p *ProxyETHCall) ToRequest(ethreq *eth.CallRequest) (*qtum.CallContractReq
 		To:       ethreq.To,
 		From:     from,
 		Data:     ethreq.Data,
-		GasLimit: ethreq.Gas.Int,
+		GasLimit: big.NewInt(10000), // TODO: qtum [code: -3] Invalid value for gasLimit (Minimum is: 10000)
+		//GasLimit: ethreq.Gas.Int,
 	}, nil
 }
 
