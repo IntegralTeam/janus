@@ -83,6 +83,7 @@ func GetTransactionByHash(p *qtum.Qtum, hash string, height, position int) (*eth
 			return nil, err
 		}
 
+		/// TODO: Correct to normal values
 		txData = &qtum.GetTransactionResponse{
 			Amount:            0.0,
 			Fee:               0.0,
