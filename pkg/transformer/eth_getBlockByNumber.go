@@ -42,12 +42,14 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 		return nil, err
 	}
 
+	// TODO: Correct to normal values
 	if blockHeaderResp.Previousblockhash == "" {
 		blockHeaderResp.Previousblockhash = "0000000000000000000000000000000000000000000000000000000000000000"
 	}
 
 	nonce := hexutil.EncodeUint64(uint64(blockHeaderResp.Nonce))
 
+	// TODO: Correct translation into hex
 	if len(strings.TrimLeft(nonce, "0x")) < 16 {
 		res := strings.TrimLeft(nonce, "0x")
 		for i := 0; i < 16-len(res); {
@@ -80,7 +82,7 @@ func (p *ProxyETHGetBlockByNumber) request(req *eth.GetBlockByNumberRequest) (*e
 		txsObj = append(txsObj, *ethTx)
 	}
 
-	/// TODO: Correct to normal values
+	// TODO: Correct to normal values
 	result := &eth.GetBlockByNumberResponse{
 		Hash:             utils.AddHexPrefix(blockHeaderResp.Hash),
 		Nonce:            utils.AddHexPrefix(nonce),
